@@ -42,10 +42,7 @@ Accidents = Base.classes.accident_coords
 @app.route("/")
 def home():
     """List all available api routes."""
-    return (
-        f"Available Routes:<br/>"
-        f"/test<br/>"
-    )
+    return (render_template("index.html"))
 
 @app.route("/json")
 def json():
