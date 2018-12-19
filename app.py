@@ -68,13 +68,13 @@ def json():
 
     return jsonify(accidents)
 
-@app.route("/accident_filter/<user_filter>")
-def accident_filter(user_filter):
+@app.route("/user_filter/<selYear>/<selBPF>/<selACC>/<selIS>")
+def user_filter(selYear, selBPF, selACC, selIS):
     """Return a list of accidents"""
-    jAccidents = session.query(Accidents).filter(Accidents.EventDate.strftime("%Y") == user_filter["selYear"])\
-                                         .filter(Accidents.BroadPhaseOfFlight == user_filter["selBPF"])\
-                                         .filter(Accidents.AircraftCategory == user_filter["selACC"])\
-                                         .filter(Accidents.InjurySeverity == user_filter["selIS"]).all()
+    jAccidents = session.query(Accidents).filter(Accidents.EventDate.contains(selYear))\
+                                         .filter(Accidents.BroadPhaseOfFlight == selBPF)\
+                                         .filter(Accidents.AircraftCategory == selACC)\
+                                         .filter(Accidents.InjurySeverity == selIS).all()
 
     # Create a dictionary from the row data and append to a list of all accidents
     accidents = []
