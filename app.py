@@ -41,7 +41,6 @@ Accidents = Base.classes.accident_coords
 
 @app.route("/")
 def home():
-    """List all available api routes."""
     return (render_template("index.html"))
 
 @app.route("/json")
@@ -96,6 +95,17 @@ def accident_filter(user_filter):
         accidents.append(accident_dict)
 
     return jsonify(accidents)
+
+@app.route('/help', methods = ['GET'])
+def help():
+    """Print available functions."""
+    func_list = {}
+    for rule in app.url_map.iter_rules():
+        if rule.endpoint != 'static':
+            func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
+    return jsonify(func_list)
+
+
 
 if __name__ == "__main__":
     app.run()
