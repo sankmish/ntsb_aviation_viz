@@ -14,15 +14,15 @@ function buildMetadata(response) {
       //Check if Fatal or Not-Fatal for entire response and change their counts
       for (var i = 0; i < response.length; i++){
         //fatal
-        console.log("Wrong Data: " + i["inj"]);
-        console.log("Test/Right Data: " + response[i]["inj"]);
+             // console.log("Wrong Data: " + i["inj"]);
+            // console.log("Test/Right Data: " + response[i]["inj"]);
         if (response[i]["inj"].substring(0,1) == "F"){
           numFatal = numFatal + 1;
         } //not-fatal 
-        else if (response[i]["ing"].substring(0,1) == "N"){
+        else if (response[i]["inj"].substring(0,1) == "N"){
           numNonFatal = numNonFatal + 1;
         } else {
-          console.log("MetaData Error in Injury Severity Substring : " + response[i]["ing"].substring(0,1));
+          console.log("MetaData Error in Injury Severity Substring : " + response[i]["inj"].substring(0,1));
         }
       }
   
@@ -34,9 +34,15 @@ function buildMetadata(response) {
         }  //visible
         else if (response[j]["wec"] == "VMC"){
           numVisible = numVisible + 1;
-        } else if (response[j]["wec" == "NULL"] ){
+        } else if (response[j]["wec" == "UNK"] ){
+            // do nothing
+          }
+        else if (response[j]["wec" == "NULL"] ){
           // do nothing
-        } else {
+        } else if (response[j]["wec" == "null"] ){
+            // do nothing
+          }
+        else {
           console.log("MetaData Error in Weather Conditions : " + response[j]["wec"]);
         }
       }
@@ -85,11 +91,8 @@ function buildMetadata(response) {
     var novCount = 0;
     var decCount = 0;
     for (var i=0; i < response.length; i++){
-        if (i ==0) {
-        console.log(response[i]["date"]);
-        console.log(response[i].date);
-        }
         var monthSubstring = response[i].date.substring(0,2);
+        console.log(monthSubstring);
         if (monthSubstring == "01"){
             janCount = janCount + 1;
         } else if (monthSubstring == "02" ) {
@@ -117,7 +120,7 @@ function buildMetadata(response) {
         } else {
             console.log("month substring error : " + monthSubstring);
         }
-        monthsArray.push('NumOfAccidents');
+    }
         monthsArray.push(janCount);
         monthsArray.push(febCount);
         monthsArray.push(marCount);
@@ -130,35 +133,38 @@ function buildMetadata(response) {
         monthsArray.push(octCount);
         monthsArray.push(novCount);
         monthsArray.push(decCount);
-    }
+    
     console.log("Months Array Count: " + monthsArray);
     
     var chart = c3.generate({
         bindto: `#c3Chart`,
+        type: 'line',
         size: {
-            height: 600,
-            width: 600
-        },
-        data: {
-            x: 'Months',
-            columns: [
-                ['Months', "January", "February", "March", "April", "May", "June", "July", "August", "September", "Octoboder", "November", "December"],
-                monthsArray 
-            ],
-        axis: {
-            x: {
-                text: 'Month',    
-                position: 'outer-center'
-            },
-            y: {
-                text: 'Number of Aviation Accidents',
-                position: 'outer-middle'
-            }
-        },
-            type: 'bar'
-        }
+                    height: 600,
+                    width: 600
+                },
+                data: {
+                    columns: [ monthsArray ]
+                }, 
+                axis: {
+                    x: {
+                        label: {
+                            text: 'Month',
+                            position: 'outer-center'
+                        },
+                        type: 'category',
+                        categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'Decemeber']
+                    },
+                    y: {
+                        label: {
+                            text: 'Number Of Aviation Accidents',
+                            position: 'outer-middle'
+                        }
+                    }
+                }
     });
-    
+
+
     setTimeout(function () {
         chart.transform('spline');
     }, 5000);
@@ -291,8 +297,7 @@ function buildMetadata(response) {
 
 
   function init() {
-    //   const initURL = "/user_filter/2008/All/All/All";
-    var initURL = "/json";
+       const initURL = "/user_filter/2008/All/All/All";
       // Use the first sample from the list to build the initial plots
       d3.json(initURL).then(function(response){
           console.log(response);
@@ -309,9 +314,6 @@ function buildMetadata(response) {
    
   // User clicks button to filter. Take filter query and go to user_filter. Grab json, build metadata, 
   //  plot c3 chart, plot d3 chart, plot aviation map.
-  var submit = d3.select("#filterDataset");
-
-submit.on("click", function() {
 
   // Prevent the page from refreshing
   d3.event.preventDefault();
@@ -325,6 +327,7 @@ submit.on("click", function() {
   for (var j = 0; j < inputsArray.length; j++) {
     // Select the input element and get the raw HTML node
     var inputElement = d3.select("#" + inputsArray[j]);
+    console.log(inputElement);
 
     // Get the value property of the input element
     var inputValue = inputElement.property("value");
@@ -348,12 +351,6 @@ submit.on("click", function() {
      buildD3Chart(response);
     
      });
-  
-    
-  
-  
-  
-  });
   
   
   }
