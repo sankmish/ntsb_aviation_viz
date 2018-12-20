@@ -25,8 +25,6 @@ submit.on("click", function() {
     url += "/" + inputValue;
   }
 
-  //d3.json(url);
-
   console.log(url);
 
 });

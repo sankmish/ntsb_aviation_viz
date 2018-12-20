@@ -56,7 +56,7 @@
               <option value="fatal("> Fatal </option>
             </select>
             <br>
-          <button id="filterDataset" onchange="optionChanged(this.value)"> FILTER </button>
+          <button id="filterDataset" onchange="optionChanged()"> FILTER </button>
         </div>
         <div class="panel panel-primary">
           <div class="panel-heading">
@@ -69,18 +69,17 @@
         <div id="aviationMap">
             <div id="map">
 
-          <!---  <img src="http://link-italia.org/images/amazing-world-map-without-labels-13.png" height="600px" width="950px" /> --> 
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="row">
-      <div class="col-md-6">
+      <div class="col-lg-12 col-md-12 col-sm-12">
           <div id="c3Chart"></div>
         </div>
-      <div class="col-md-6">
-          <div id="filteredChart"></div>
+      <div class="col-lg-12 col-md-12 col-sm-12">
+          <div id="d3Chart"></div>
         </div>
    
   </div>
@@ -112,14 +111,7 @@
   <!-- Our Style Sheet -->
   <link rel="stylesheet" type="text/css" href="static/style.css">
   <!-- Initialize Page with metaData, graph with C3App and D3App -->
-   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-   <script type="text/javascript" src="static/c3App.js"></script>
-   <script type="text/javascript" src="static/d3App.js"></script>
-   <!-- API key for MapBox-->
-   <script type="text/javascript" src="static/config.js"></script>
-   <!--  place tileLayer with AviationMap-->
-   <script type="text/javascript" src="static/mapLogic.js"></script>
-   <!-- Build SVG Animations with data on AviationMap -->
+   <script type="text/javascript" src="static/app.js"></script>
 
 
 </body>

@@ -71,7 +71,7 @@ def json():
 
 @app.route("/user_filter/<selYear>/<selBPF>/<selACC>/<selIS>")
 def user_filter(selYear, selBPF, selACC, selIS):
-    """Return a list of accidents"""
+    """Return a list of accidents filtered by variables"""
     queries = []
 
     if selYear != "":
@@ -106,30 +106,31 @@ def user_filter(selYear, selBPF, selACC, selIS):
 
     return jsonify(accidents)
 
-@app.route("/yamini")
-def yamini():
-    jAccidents = session.query(Accidents).filter(Accidents.EventDate.startswith('12/')).all()
+@app.route("/coords")
+def coords():
+    """Return the MetaData for a given sample."""
+    sel = [
+        Accidents.EventDate,
+        Accidents.start_lats,
+        Accidents.start_lons,
+        Accidents.Latitude,
+        Accidents.Longitude
+    ]
 
-    # Create a dictionary from the row data and append to a list of all accidents
-    accidents = []
-    for accident in jAccidents:
-        accident_dict = {}
-        accident_dict["date"] = accident.EventDate
-        accident_dict["apc"] = accident.AirportCode
-        accident_dict["apn"] = accident.AirportName
-        accident_dict["loc"] = accident.Location
-        accident_dict["con"] = accident.Country
-        accident_dict["bpf"] = accident.BroadPhaseOfFlight
-        accident_dict["inj"] = accident.InjurySeverity
-        accident_dict["cat"] = accident.AircraftCategory
-        accident_dict["wec"] = accident.WeatherCondition
-        accident_dict["slat"] = accident.start_lats
-        accident_dict["slon"] = accident.start_lons
-        accident_dict["flat"] = accident.Latitude
-        accident_dict["flon"] = accident.Longitude
-        accidents.append(accident_dict)
+    results = session.query(*sel).filter(Accidents.EventDate.contains('2014')).all()
 
-    return jsonify(accidents)
+    # Create a dictionary entry for each row of metadata information
+    coordinates = []
+    for result in results:
+        coord = {}
+        coord["date"] = result[0]
+        coord["lat1"] = float(result[1])
+        coord["lon1"] = float(result[2])
+        coord["lat2"] = float(result[3])
+        coord["lon2"] = float(result[4])
+        coordinates.append(coord)
+
+    return jsonify(coordinates)
 
 @app.route('/help', methods = ['GET'])
 def help():
