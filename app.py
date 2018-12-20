@@ -52,6 +52,7 @@ def json():
     accidents = []
     for accident in jAccidents:
         accident_dict = {}
+        accident_dict["date"] = accident.EventDate
         accident_dict["apc"] = accident.AirportCode
         accident_dict["apn"] = accident.AirportName
         accident_dict["loc"] = accident.Location
@@ -71,15 +72,24 @@ def json():
 @app.route("/user_filter/<selYear>/<selBPF>/<selACC>/<selIS>")
 def user_filter(selYear, selBPF, selACC, selIS):
     """Return a list of accidents"""
-    jAccidents = session.query(Accidents).filter(Accidents.EventDate.contains(selYear))\
-                                         .filter(Accidents.BroadPhaseOfFlight == selBPF)\
-                                         .filter(Accidents.AircraftCategory == selACC)\
-                                         .filter(Accidents.InjurySeverity == selIS).all()
+    queries = []
+
+    if selYear != "":
+        queries.append(Accidents.EventDate.contains(selYear))
+    if selBPF != "All":
+        queries.append(Accidents.BroadPhaseOfFlight == selBPF)
+    if selACC != "All":
+        queries.append(Accidents.AircraftCategory == selACC)
+    if selIS != "All":
+        queries.append(Accidents.InjurySeverity.contains(selIS))
+
+    jAccidents = session.query(Accidents).filter(*queries).all()
 
     # Create a dictionary from the row data and append to a list of all accidents
     accidents = []
     for accident in jAccidents:
         accident_dict = {}
+        accident_dict["date"] = accident.EventDate
         accident_dict["apc"] = accident.AirportCode
         accident_dict["apn"] = accident.AirportName
         accident_dict["loc"] = accident.Location
