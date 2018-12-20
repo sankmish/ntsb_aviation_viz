@@ -74,6 +74,8 @@ function buildMetadata(response) {
 
 
   function buildC3Chart(response) {
+      var yearSubstring = response[0].date.substring(5);
+      console.log("Year Substring :" + yearSubstring);
     //get the full response and then build the list of monthly accidents in this function
     console.log("C3 Chart check user_filter response: " + response);
     //retrieve a list of count of the months from the data
@@ -144,7 +146,7 @@ function buildMetadata(response) {
                     width: 600
                 },
                 data: {
-                    columns: [ monthsArray ]
+                    columns: [ yearSubstring, monthsArray ]
                 }, 
                 axis: {
                     x: {
