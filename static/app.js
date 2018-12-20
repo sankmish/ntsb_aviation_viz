@@ -1,5 +1,5 @@
 function buildMetadata(response) {
-
+    console.log(response);
 
   //# of Accidents, Count of Both Weather Conditions, Most Common Crash Location, # of Fatal/Non-Fatal Incidents
   
@@ -14,28 +14,30 @@ function buildMetadata(response) {
       //Check if Fatal or Not-Fatal for entire response and change their counts
       for (var i = 0; i < response.length; i++){
         //fatal
-        if (i["inj"].substring(0,1) == "F"){
+        console.log("Wrong Data: " + i["inj"]);
+        console.log("Test/Right Data: " + response[i]["inj"]);
+        if (response[i]["inj"].substring(0,1) == "F"){
           numFatal = numFatal + 1;
         } //not-fatal 
-        else if (i["ing"].substring(0,1) == "N"){
+        else if (response[i]["ing"].substring(0,1) == "N"){
           numNonFatal = numNonFatal + 1;
         } else {
-          console.log("MetaData Error in Injury Severity Substring : " + i["ing"].substring(0,1));
+          console.log("MetaData Error in Injury Severity Substring : " + response[i]["ing"].substring(0,1));
         }
       }
   
       //Check if Visible or Not-Visible and change their counts
       for (var j = 0; j < response.length; j++){
         //not visible
-        if (i["wec"] == "IMC"){
+        if (response[j]["wec"] == "IMC"){
           numNotVisible = numNotVisible + 1;
         }  //visible
-        else if (i["wec"] == "VMC"){
+        else if (response[j]["wec"] == "VMC"){
           numVisible = numVisible + 1;
-        } else if (i["wec" == "NULL"] ){
+        } else if (response[j]["wec" == "NULL"] ){
           // do nothing
         } else {
-          console.log("MetaData Error in Weather Conditions : " + i["wec"]);
+          console.log("MetaData Error in Weather Conditions : " + response[j]["wec"]);
         }
       }
   
@@ -83,9 +85,11 @@ function buildMetadata(response) {
     var novCount = 0;
     var decCount = 0;
     for (var i=0; i < response.length; i++){
-        console.log(i["date"]);
-        console.log(i.date);
-        var monthSubstring = i["date"].substring(0,2);
+        if (i ==0) {
+        console.log(response[i]["date"]);
+        console.log(response[i].date);
+        }
+        var monthSubstring = response[i].date.substring(0,2);
         if (monthSubstring == "01"){
             janCount = janCount + 1;
         } else if (monthSubstring == "02" ) {
@@ -220,29 +224,29 @@ function buildMetadata(response) {
       
       for (var i=0; i< response.length;i++){
       //approach
-      if (i["bpf"] == "APPROACH"){
+      if (response[i]["bpf"] == "APPROACH"){
           approachCount = approachCount + 1;
       } //climb
-      else if (i["bpf"] == "CLIMB"){
+      else if (response[i]["bpf"] == "CLIMB"){
           climbCount = climbCount + 1;
       } //cruise
-      else if (i["bpf"] == "CRUISE"){
+      else if (response[i]["bpf"] == "CRUISE"){
           cruiseCount = cruiseCount + 1;
       } //descent 
-      else if (i["bpf"] == "DESCENT"){
+      else if (response[i]["bpf"] == "DESCENT"){
           descentCount = descentCount + 1;
       } //go-around
-      else if (i["bpf"] == "GO-AROUND"){
+      else if (response[i]["bpf"] == "GO-AROUND"){
           goAroundCount = goAroundCount + 1;
       } //landing
-      else if (i["bpf"] == "LANDING"){
+      else if (response[i]["bpf"] == "LANDING"){
           landingCount = landingCount + 1;
       } //maneuvering
-      else if (i["bpf"] == "MANEUVERING"){
+      else if (response[i]["bpf"] == "MANEUVERING"){
           maneuveringCount = maneuveringCount + 1;
       } //error
       else {
-          console.log("D3 Pie Chart Error in Broad Phase of Flight : " + i["bpf"]);
+          console.log("D3 Pie Chart Error in Broad Phase of Flight : " + response[i]["bpf"]);
       }
       
       
@@ -279,7 +283,7 @@ function buildMetadata(response) {
             title: '% of Accidents by Broad Phase Of Flight'
           }
       
-          Plotly.newPlot("c3Chart", [trace], layout2);
+          Plotly.newPlot("d3Chart", [trace], layout2);
         
       
       } //end buildD3Chart
@@ -287,12 +291,16 @@ function buildMetadata(response) {
 
 
   function init() {
-      const initURL = "/user_filter/2000/*/*/*";
-      var initResponse = d3.json(initURL);
+    //   const initURL = "/user_filter/2008/All/All/All";
+    var initURL = "/json";
       // Use the first sample from the list to build the initial plots
-      buildMetadata(initResponse);
-      buildC3Chart(initResponse);
-      buildD3Chart(initResponse);
+      d3.json(initURL).then(function(response){
+          console.log(response);
+        buildMetadata(response);
+        buildC3Chart(response);
+        buildD3Chart(response);
+       
+        });
       
     
   }
@@ -302,29 +310,37 @@ function buildMetadata(response) {
   // User clicks button to filter. Take filter query and go to user_filter. Grab json, build metadata, 
   //  plot c3 chart, plot d3 chart, plot aviation map.
   var submit = d3.select("#filterDataset");
-  
-  submit.on("click", function() {
-  
-    // Prevent the page from refreshing
-    d3.event.preventDefault();
-  
-    //list of divs to loop through
-    var inputsArray = ["selYear", "selBPF", "selACC", "selIS"];
-  
-    //initial url that will be appended to
-    var url =`/user_filter`;
-  
-    for (var j = 0; j < inputsArray.length; j++) {
-      // Select the input element and get the raw HTML node
-      var inputElement = d3.select("#" + inputsArray[j]);
-  
-      // Get the value property of the input element
-      var inputValue = inputElement.property("value");
-  
-      url += "/" + inputValue;
+
+submit.on("click", function() {
+
+  // Prevent the page from refreshing
+  d3.event.preventDefault();
+
+  //list of divs to loop through
+  var inputsArray = ["selYear", "selBPF", "selACC", "selIS"];
+
+  //initial url that will be appended to
+  var url =`/user_filter`;
+
+  for (var j = 0; j < inputsArray.length; j++) {
+    // Select the input element and get the raw HTML node
+    var inputElement = d3.select("#" + inputsArray[j]);
+
+    // Get the value property of the input element
+    var inputValue = inputElement.property("value");
+
+    if (inputValue == ""){
+      inputValue = 2008;
     }
-  
-    console.log(url);
+
+    url += "/" + inputValue;
+  }
+
+  //d3.json(url);
+
+  console.log(url);
+
+
   // go to user_filtered url, grab filteredJSON, return and fill metaData, C3Chart, D3Chart, and aviationMap
      d3.json(url).then(function(response){
      buildMetadata(response);
@@ -339,7 +355,8 @@ function buildMetadata(response) {
   
   });
   
+  
+  }
+
   // Initialize the dashboard
   init();
-  
-  

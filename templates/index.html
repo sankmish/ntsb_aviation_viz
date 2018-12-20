@@ -5,9 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Flask Plotlyjs Example</title>
+  <title> Interactive Airport Accidents</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="static/style.css">
   <script src="https://d3js.org/d3.v5.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.0.0/math.min.js"></script>
 </head>
@@ -32,7 +31,7 @@
           <br>
           Broad Phase of Flight:
           <select id="selBPF">
-              <option value="*"> All </option>
+              <option value="All"> All </option>
               <option value="APPROACH"> Approach </option>
               <option value="MANEUVERING"> Maneuvering </option>
               <option value="DESCENT"> Descent </option>
@@ -44,16 +43,16 @@
           <br>
           AirCraft Category:
           <select id="selACC">
-              <option value="*"> All </option>
+              <option value="All"> All </option>
             <option value="Helicopter"> Helicopter </option>
             <option value="Airplane"> Airplane </option>
           </select>
           <br>
           Injury Severity:
           <select id="selIS">
-              <option value="*"> All </option>
-              <option value="N"> Non-Fatal </option>
-              <option value="F"> Fatal </option>
+              <option value="All"> All </option>
+              <option value="NON-FATAL"> Non-Fatal </option>
+              <option value="fatal("> Fatal </option>
             </select>
             <br>
           <button id="filterDataset" onchange="optionChanged()"> FILTER </button>
@@ -69,6 +68,7 @@
         <div id="aviationMap">
             <div id="map">
 
+          <!---  <img src="http://link-italia.org/images/amazing-world-map-without-labels-13.png" height="600px" width="950px" /> --> 
           </div>
         </div>
       </div>
@@ -109,9 +109,9 @@
   crossorigin=""></script>
 
   <!-- Our Style Sheet -->
-  <link rel="stylesheet" type="text/css" href="static/style.css">
+  <link rel="stylesheet" type="text/css" href="../static/style.css">
   <!-- Initialize Page with metaData, graph with C3App and D3App -->
-   <script type="text/javascript" src="static/app.js"></script>
+   <script type="text/javascript" src="../static/app.js"></script>
 
 
 </body>
