@@ -74,7 +74,7 @@ function buildMetadata(response) {
 
 
   function buildC3Chart(response) {
-      var yearSubstring = response[0].date.substring(5);
+      var yearSubstring = response[0].date.substring(6);
       console.log("Year Substring :" + yearSubstring);
     //get the full response and then build the list of monthly accidents in this function
     console.log("C3 Chart check user_filter response: " + response);
@@ -123,6 +123,7 @@ function buildMetadata(response) {
             console.log("month substring error : " + monthSubstring);
         }
     }
+        monthsArray.push("Months");
         monthsArray.push(janCount);
         monthsArray.push(febCount);
         monthsArray.push(marCount);
@@ -137,23 +138,19 @@ function buildMetadata(response) {
         monthsArray.push(decCount);
     
     console.log("Months Array Count: " + monthsArray);
-    
+    console.log("Something Changed");
     var chart = c3.generate({
         bindto: `#c3Chart`,
         type: 'line',
         size: {
-                    height: 600,
-                    width: 600
+                    height: 800,
+                    width: 1000
                 },
                 data: {
-                    columns: [ yearSubstring, monthsArray ]
+                    columns:  [ monthsArray ]
                 }, 
                 axis: {
                     x: {
-                        label: {
-                            text: 'Month',
-                            position: 'outer-center'
-                        },
                         type: 'category',
                         categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'Decemeber']
                     },
@@ -176,19 +173,19 @@ function buildMetadata(response) {
     }, 10000);
     
     setTimeout(function () {
-        chart.transform('spline');
+        chart.transform('line');
     }, 15000);
     
     setTimeout(function () {
-        chart.transform('bar');
+        chart.transform('spline');
     }, 20000);
     
     setTimeout(function () {
-        chart.transform('spline');
+        chart.transform('bar');
     }, 25000);
     
     setTimeout(function () {
-        chart.transform('bar');
+        chart.transform('line');
     }, 30000);
     
     setTimeout(function () {
@@ -200,19 +197,19 @@ function buildMetadata(response) {
     }, 40000);
     
     setTimeout(function () {
-        chart.transform('spline');
+        chart.transform('line');
     }, 45000);
     
     setTimeout(function () {
-        chart.transform('bar');
+        chart.transform('spline');
     }, 50000);
     
     setTimeout(function () {
-        chart.transform('spline');
+        chart.transform('bar');
     }, 55000);
     
     setTimeout(function () {
-        chart.transform('bar');
+        chart.transform('line');
     }, 60000);
     
     
@@ -316,7 +313,7 @@ function buildMetadata(response) {
    
   // User clicks button to filter. Take filter query and go to user_filter. Grab json, build metadata, 
   //  plot c3 chart, plot d3 chart, plot aviation map.
-
+    console.log("Got On Click Event for Filter Button");
   // Prevent the page from refreshing
   d3.event.preventDefault();
 
