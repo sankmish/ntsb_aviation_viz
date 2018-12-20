@@ -106,6 +106,34 @@ def user_filter(selYear, selBPF, selACC, selIS):
 
     return jsonify(accidents)
 
+
+@app.route("/coords")
+def coords():
+    """Return the MetaData for a given sample."""
+    sel = [
+        Accidents.EventDate,
+        Accidents.start_lats,
+        Accidents.start_lons,
+        Accidents.Latitude,
+        Accidents.Longitude
+    ]
+
+    results = session.query(*sel).filter(Accidents.EventDate.contains('2014')).all()
+
+    # Create a dictionary entry for each row of metadata information
+    coordinates = []
+    for result in results:
+        coord = {}
+        coord["date"] = result[0]
+        coord["lat1"] = float(result[1])
+        coord["lon1"] = float(result[2])
+        coord["lat2"] = float(result[3])
+        coord["lon2"] = float(result[4])
+        coordinates.append(coord)
+
+    return jsonify(coordinates)
+
+
 @app.route('/help', methods = ['GET'])
 def help():
     """Print available functions."""
