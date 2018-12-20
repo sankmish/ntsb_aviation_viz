@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Flask Plotlyjs Example</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="static/style.css">
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.0.0/math.min.js"></script>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 jumbotron text-center">
+        <h1> NTSB Aviation Data Dashboard</h1>
+        <p>Use the interactive charts below to explore the dataset</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <div class="well">
+          <h5>SELECT Sample:</h5>
+          Start Year: <br>
+          <input id="selYear"></input>
+          <br>
+          <b> Filter Types: </b>
+          <br>
+          Broad Phase of Flight:
+          <select id="selBPF">
+              <option value="*"> All </option>
+              <option value="APPROACH"> Approach </option>
+              <option value="MANEUVERING"> Maneuvering </option>
+              <option value="DESCENT"> Descent </option>
+              <option value="CRUISE"> Cruise </option>
+              <option value="CLIMB"> Climb </option>
+              <option value="LANDING"> Landing </option>
+              <option value="GO-AROUND"> Go-Around </option>
+          </select>
+          <br>
+          AirCraft Category:
+          <select id="selACC">
+              <option value="*"> All </option>
+            <option value="Helicopter"> Helicopter </option>
+            <option value="Airplane"> Airplane </option>
+          </select>
+          <br>
+          Injury Severity:
+          <select id="selIS">
+              <option value="*"> All </option>
+              <option value="N"> Non-Fatal </option>
+              <option value="F"> Fatal </option>
+            </select>
+            <br>
+          <button id="filterDataset" onchange="optionChanged()"> FILTER </button>
+        </div>
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">Sample MetaData</h3>
+          </div>
+          <div id="sample-metadata" class="panel-body"></div>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div id="aviationMap">
+            <div id="map">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+      <div class="col-md-6">
+          <div id="c3Chart"></div>
+        </div>
+      <div class="col-md-6">
+          <div id="filteredChart"></div>
+        </div>
+   
+  </div>
+
+
+  <!-- D3 script reference -->
+
+  <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.js"></script>
+
+  <!-- C3 script reference -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.11/c3.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.11/c3.min.js"></script>
+  
+ 
+
+   <!--Plotly Import   -->
+   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Leaflet Script -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.3/dist/leaflet.css"
+  integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+  crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.3.3/dist/leaflet.js"
+  integrity="sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q=="
+  crossorigin=""></script>
+
+  <!-- Our Style Sheet -->
+  <link rel="stylesheet" type="text/css" href="static/style.css">
+  <!-- Initialize Page with metaData, graph with C3App and D3App -->
+   <script type="text/javascript" src="static/app.js"></script>
+
+
+</body>
+
+</html>
