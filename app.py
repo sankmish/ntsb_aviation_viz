@@ -108,7 +108,7 @@ def user_filter(selYear, selBPF, selACC, selIS):
 
 @app.route("/yamini")
 def yamini():
-    jAccidents = session.query(Accidents).filter(Accidents.EventDate[:2].contains('12/')).all()
+    jAccidents = session.query(Accidents).filter(Accidents.EventDate.startswith('12/')).all()
 
     # Create a dictionary from the row data and append to a list of all accidents
     accidents = []
