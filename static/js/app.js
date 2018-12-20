@@ -18,6 +18,10 @@ submit.on("click", function() {
     // Get the value property of the input element
     var inputValue = inputElement.property("value");
 
+    if (inputValue == ""){
+      inputValue = 2008;
+    }
+
     url += "/" + inputValue;
   }
 
