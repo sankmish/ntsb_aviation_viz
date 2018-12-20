@@ -54,6 +54,29 @@ ALTER TABLE aviation_accidents
 -- display table
 SELECT * FROM aviation_accidents;
 
+-- QUERIES --
+
+-- limit dataset
+-- INSERT INTO <table name>
+SELECT COUNT(*) FROM aviation_accidents
+WHERE (Latitude IS NOT NULL AND Longitude IS NOT NULL)
+AND (AircraftCategory = 'Airplane' OR AircraftCategory = 'Helicopter')
+AND (InvestigationType = 'Accident')
+AND (BroadPhaseOfFlight <> 'TAXI'			-- replace if data is limited
+AND BroadPhaseOfFlight <> 'UNKNOWN'
+AND BroadPhaseOfFlight <> 'TAKEOFF'
+AND BroadPhaseOfFlight <> 'STANDING'
+AND BroadPhaseOfFlight <> 'OTHER');
+
+-- show distinct years and accidents counts
+SELECT YEAR(STR_TO_DATE(EventDate, '%m/%d/%Y')), COUNT(*) FROM aviation_accidents_coord
+GROUP BY YEAR(STR_TO_DATE(EventDate, '%m/%d/%Y'))
+ORDER BY YEAR(STR_TO_DATE(EventDate, '%m/%d/%Y'));
+
+-- show distinct broad phases and counts
+SELECT DISTINCT BroadPhaseOfFlight,COUNT(*) FROM aviation_accidents_coord
+GROUP BY BroadPhaseOfFlight;
+
 -- SETUP --
 SHOW VARIABLES LIKE "secure_file_priv";
 -- SHOW GLOBAL VARIABLES LIKE 'local_infile';
