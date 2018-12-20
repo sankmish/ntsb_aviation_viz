@@ -106,6 +106,31 @@ def user_filter(selYear, selBPF, selACC, selIS):
 
     return jsonify(accidents)
 
+@app.route("/yamini")
+def yamini():
+    jAccidents = session.query(Accidents).filter(Accidents.EventDate[:2].contains('12/')).all()
+
+    # Create a dictionary from the row data and append to a list of all accidents
+    accidents = []
+    for accident in jAccidents:
+        accident_dict = {}
+        accident_dict["date"] = accident.EventDate
+        accident_dict["apc"] = accident.AirportCode
+        accident_dict["apn"] = accident.AirportName
+        accident_dict["loc"] = accident.Location
+        accident_dict["con"] = accident.Country
+        accident_dict["bpf"] = accident.BroadPhaseOfFlight
+        accident_dict["inj"] = accident.InjurySeverity
+        accident_dict["cat"] = accident.AircraftCategory
+        accident_dict["wec"] = accident.WeatherCondition
+        accident_dict["slat"] = accident.start_lats
+        accident_dict["slon"] = accident.start_lons
+        accident_dict["flat"] = accident.Latitude
+        accident_dict["flon"] = accident.Longitude
+        accidents.append(accident_dict)
+
+    return jsonify(accidents)
+
 @app.route('/help', methods = ['GET'])
 def help():
     """Print available functions."""
