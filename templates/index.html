@@ -2,17 +2,20 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Flask Plotlyjs Example</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="static/style.css">
-  <script src="https://d3js.org/d3.v5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.0.0/math.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Flask Plotlyjs Example</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/style.css">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.0.0/math.min.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js' charset='utf-8'></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet' />
 </head>
 
-<body>
+<body>   
 
   <div class="container">
     <div class="row">
@@ -67,7 +70,31 @@
       </div>
       <div class="col-md-9">
         <div id="aviationMap">
-            <div id="map">
+          <div id='map'></div>
+          <div class='overlay'>
+              <button id='replay'>Replay</button>
+          </div>
+        
+          <div class='map-overlay top'>
+              <div class='map-overlay-inner'>
+                  <h4>Airplane Crashes in 2014</h4>
+                  <label id='month'></label>
+                  <div class="btn-group pull-right" role="group" aria-label="...">
+                    <button onclick="decrement()" id="b1" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+                    <button onclick="increment()" id="b2" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                  </div>
+                  <input id='slider' type='range' min='0' max='11' step='1' value='0' />
+              </div>
+          </div>
+        
+          <script>
+          function increment() {
+            document.getElementById("slider").stepUp(1);
+          }
+          function decrement() {
+            document.getElementById("slider").stepDown(1);
+          }
+          </script>
 
           </div>
         </div>
@@ -111,7 +138,8 @@
   <!-- Our Style Sheet -->
   <link rel="stylesheet" type="text/css" href="static/style.css">
   <!-- Initialize Page with metaData, graph with C3App and D3App -->
-   <script type="text/javascript" src="static/app.js"></script>
+  <script src="{{ url_for('static', filename='config.js') }}"></script>
+  <script type="text/javascript" src="static/app.js"></script>
 
 
 </body>
