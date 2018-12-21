@@ -1,5 +1,5 @@
 function buildMetadata(response) {
-    console.log(response);
+   // console.log(response);
 
   //# of Accidents, Count of Both Weather Conditions, Most Common Crash Location, # of Fatal/Non-Fatal Incidents
   
@@ -75,9 +75,9 @@ function buildMetadata(response) {
 
   function buildC3Chart(response) {
       var yearSubstring = response[0].date.substring(6);
-      console.log("Year Substring :" + yearSubstring);
+     // console.log("Year Substring :" + yearSubstring);
     //get the full response and then build the list of monthly accidents in this function
-    console.log("C3 Chart check user_filter response: " + response);
+    //console.log("C3 Chart check user_filter response: " + response);
     //retrieve a list of count of the months from the data
     var monthsArray = [];
     var janCount = 0;
@@ -94,7 +94,7 @@ function buildMetadata(response) {
     var decCount = 0;
     for (var i=0; i < response.length; i++){
         var monthSubstring = response[i].date.substring(0,2);
-        console.log(monthSubstring);
+        //console.log(monthSubstring);
         if (monthSubstring == "01"){
             janCount = janCount + 1;
         } else if (monthSubstring == "02" ) {
@@ -137,8 +137,8 @@ function buildMetadata(response) {
         monthsArray.push(novCount);
         monthsArray.push(decCount);
     
-    console.log("Months Array Count: " + monthsArray);
-    console.log("Something Changed");
+    //console.log("Months Array Count: " + monthsArray);
+    //console.log("Something Changed");
     var chart = c3.generate({
         bindto: `#c3Chart`,
         type: 'line',
@@ -266,7 +266,7 @@ function buildMetadata(response) {
       BPFArray.push(goAroundCount);
       BPFArray.push(landingCount);
       BPFArray.push(maneuveringCount);
-      console.log("Broad Phase Of Flight Array Values: " + BPFArray);
+      //console.log("Broad Phase Of Flight Array Values: " + BPFArray);
       BPFLabelsArray = ["Approach", "Climb", "Cruise", "Descent", "Go-Around", "Landing", "Maneuvering"];
       
       
@@ -294,26 +294,224 @@ function buildMetadata(response) {
       } //end buildD3Chart
 
 
+    function buildAviationMap (response){
+        mapboxgl.accessToken = API_KEY;
+
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/dark-v9',
+        center: [0, 15],
+        zoom: 1
+    });
+
+    var months = ['January','February','March','April','May','June','July',
+                    'August','September','October','November','December'];
+
+    var month_str = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+
+    document.getElementById('month').textContent = months[document.getElementById('slider').value];
+
+    map.on('load', function () {
+
+        var route = {
+            "type": "FeatureCollection",
+            "features": []
+        };
+
+        var point = {
+            "type": "FeatureCollection",
+            "features": []
+        }
+
+        map.addSource('route', {
+            "type": "geojson",
+            "data": route
+        });
+
+        map.addSource('point', {
+            "type": "geojson",
+            "data": point
+        });
+
+        map.addLayer({
+            "id": "point",
+            "source": "point",
+            "type": "symbol",
+            "layout": {
+                "icon-image": "airport-15",
+                "icon-rotate": ["get", "bearing"],
+                "icon-rotation-alignment": "map",
+                "icon-allow-overlap": true,
+                "icon-ignore-placement": true
+            },
+            "paint" : {
+                "icon-opacity": 1,
+            }
+        });
+
+
+            function handleSlider(e) {
+                var coordinates = response;
+
+                var route = {
+                    "type": "FeatureCollection",
+                    "features": []
+                };
+
+                var point = {
+                    "type": "FeatureCollection",
+                    "features": []
+                }
+
+                map.getSource('point').setData(point);
+                map.getSource('route').setData(route);
+
+                var month = parseInt(document.getElementById('slider').value, 10);
+                document.getElementById('month').textContent = months[month];
+
+                routes = [];
+                points = [];
+
+                coordinates.forEach(coord => {
+                    if (coord.date.startsWith(month_str[month])) {
+                        routes.push([[coord.slon,coord.slat],[coord.flon,coord.flat]])
+                        points.push([coord.slon,coord.slat])
+                    }
+                })
+                console.log("After pushing to routes/points");
+                console.log(routes)
+                console.log(points)
+
+                for (i=0;i<points.length;i++) {
+
+                    route.features.push({
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "LineString",
+                            "coordinates": routes[i]
+                        },
+                        "properties": {
+                            "id": i
+                        }
+                    })
+
+                    point.features.push({
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": points[i]
+                        },
+                        "properties": {
+                            "id": i
+                        }
+                    })
+
+                    var lineDistance = turf.lineDistance(route.features[i], 'kilometers');
+
+                    var arc = [];
+                    var steps = 50;
+
+                    for (var j = 0; j < lineDistance; j += lineDistance / steps) {
+                        var segment = turf.along(route.features[i], j, 'kilometers');
+                        arc.push(segment.geometry.coordinates);
+                    }
+
+                    route.features[i].geometry.coordinates = arc;
+
+                }
+                console.log("<------------------------------->");
+                console.log(point)
+                console.log(route)
+
+    
+                map.getSource('point').setData(point);
+                map.getSource('route').setData(route);
+
+                function animate(i, counter) {
+                    console.log ("animate function value of i: " + i);
+                    if (counter >= route.features[i].geometry.coordinates.length-1){
+                        map.setPaintProperty('point', 'icon-opacity', .3)
+                      return;
+                    }
+
+                    point.features[i].geometry.coordinates = route.features[i].geometry.coordinates[counter];
+
+                    point.features[i].properties.bearing = turf.bearing(
+                        turf.point(route.features[i].geometry.coordinates[counter >= steps ? counter - 1 : counter]),
+                        turf.point(route.features[i].geometry.coordinates[counter >= steps ? counter : counter + 1])
+                    );  
+
+                    console.log("animate point :" + point);
+                    console.log(point);
+                    map.getSource('point').setData(point);
+
+                    if (counter < steps) {
+                        requestAnimationFrame(function(){animate(i, counter+1);});
+                        map.setPaintProperty('point', 'icon-opacity', 1)
+                    }
+
+                }
+
+                function replay() {
+                    console.log("replay point");
+                    map.getSource('point').setData(point);
+
+                    for (var i=1; i<points.length; i++) {
+                            animate(i,0);
+                    }
+                }
+
+                document.getElementById('replay').addEventListener('click', replay);
+
+                for (var i=1; i<points.length; i++) {
+                    animate(i,0);
+                }
+
+            }
+
+            document.getElementById('b1').addEventListener('click', handleSlider);
+            document.getElementById('b2').addEventListener('click', handleSlider);
+            document.getElementById('slider').addEventListener('change', handleSlider);
+
+        })
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   function init() {
+
        const initURL = "/user_filter/2008/All/All/All";
       // Use the first sample from the list to build the initial plots
       d3.json(initURL).then(function(response){
-          console.log(response);
+          // console.log(response);
         buildMetadata(response);
         buildC3Chart(response);
         buildD3Chart(response);
-       
-        });
+        buildAviationMap(response);
+    }); //end d3.json
+
       
     
-  }
+}
   
   function optionChanged() {
    
   // User clicks button to filter. Take filter query and go to user_filter. Grab json, build metadata, 
   //  plot c3 chart, plot d3 chart, plot aviation map.
-    console.log("Got On Click Event for Filter Button");
+   // console.log("Got On Click Event for Filter Button");
   // Prevent the page from refreshing
   d3.event.preventDefault();
 
@@ -326,7 +524,7 @@ function buildMetadata(response) {
   for (var j = 0; j < inputsArray.length; j++) {
     // Select the input element and get the raw HTML node
     var inputElement = d3.select("#" + inputsArray[j]);
-    console.log(inputElement);
+   // console.log(inputElement);
 
     // Get the value property of the input element
     var inputValue = inputElement.property("value");
@@ -340,7 +538,7 @@ function buildMetadata(response) {
 
   //d3.json(url);
 
-  console.log(url);
+// console.log(url);
 
 
   // go to user_filtered url, grab filteredJSON, return and fill metaData, C3Chart, D3Chart, and aviationMap
@@ -348,11 +546,14 @@ function buildMetadata(response) {
      buildMetadata(response);
      buildC3Chart(response);
      buildD3Chart(response);
-    
+     console.log("Tried to update AviationMap");
      });
   
-  
+     buildAviationMap(response);
   }
+
+var button = d3.select("#filterDataset");
+button.on("click", optionChanged);
 
   // Initialize the dashboard
   init();
