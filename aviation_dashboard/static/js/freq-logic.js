@@ -1,5 +1,7 @@
 // NEEDS TO BE PUT IN FNC
 // update for chart tile, etc
+// can u figure out how to get one datapoint/bar to highlight depending on the month slider?
+// not necessary ofc just cool (y)
 
 d3.json(buildCoordsRoute(), (err,response) => {
     var yearSubstring = response[0].date.substring(6);
