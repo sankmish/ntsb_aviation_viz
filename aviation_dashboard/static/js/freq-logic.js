@@ -1,4 +1,7 @@
-d3.json('/coords', (err,response) => {
+// NEEDS TO BE PUT IN FNC
+// update for chart tile, etc
+
+d3.json(buildCoordsRoute(), (err,response) => {
     var yearSubstring = response[0].date.substring(6);
 
     //retrieve a list of count of the months from the data
@@ -34,13 +37,13 @@ d3.json('/coords', (err,response) => {
             julCount = julCount + 1;
         } else if (monthSubstring == "08" ) {
             augCount = augCount + 1;
-        }else if (monthSubstring == "09" ) {
+        } else if (monthSubstring == "09" ) {
             sepCount = sepCount + 1;
-        }else if (monthSubstring == "10" ) {
+        } else if (monthSubstring == "10" ) {
             octCount = octCount + 1;
-        }else if (monthSubstring == "11" ) {
+        } else if (monthSubstring == "11" ) {
             novCount = novCount + 1;
-        }else if (monthSubstring == "12" ) {
+        } else if (monthSubstring == "12" ) {
             decCount = decCount + 1;
         } else {
             console.log("month substring error : " + monthSubstring);
@@ -85,6 +88,18 @@ d3.json('/coords', (err,response) => {
         }
     });
 
+    arr = ['spline','bar','line']
+
+// try this?
+    // counter = 0
+    // endHere = 0
+    // timer = window.setInterval(function(){
+    //     console.log(counter)
+    //     counter++
+    //     endHere++
+    //     if (counter == 2) { counter = 0 }
+    //     if (endHere == 10) { clearInterval(timer) }
+    // },1500)
 
     setTimeout(function () {
         chart.transform('spline');

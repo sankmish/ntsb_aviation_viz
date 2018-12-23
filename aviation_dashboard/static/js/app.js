@@ -1,4 +1,5 @@
 function triangles() {
+
 	var jumbotronBg = document.getElementById('triangles');
 	var dimensions = jumbotronBg.getClientRects()[0];
 
@@ -10,14 +11,6 @@ function triangles() {
 
 	url = pattern.canvas().toDataURL();
 	jumbotronBg.style.background='url('+url+')'
-}
-
-
-function handleSlider(month) {
-	var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-	document.getElementById('month').textContent = months[month] + ' ' + document.getElementById('year').value + ", " + document.getElementById('broadPhase').value;
-
-	document.getElementById('b1').disabled = true;
 }
 
 
@@ -41,11 +34,105 @@ function init() {
 	}
 
 	triangles();
-	handleSlider(document.getElementById('slider').value)
+	
+	document.getElementById('b1').disabled = true;
+	document.getElementById('year').value = '2005'
+	document.getElementById('month').textContent = 'January ' + document.getElementById('year').value + ", " + document.getElementById('broadPhase').value;
+
+}
+
+function initMap() {
+
+    mapboxgl.accessToken = API_KEY;
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/light-v9',
+        center: [-95, 40],
+        zoom: 3
+    });
+
+    point = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+
+    route = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+
+    map.on("load", function() {
+
+	    map.addSource('point', {
+	         "type": "geojson",
+	         "data": point
+	    });
+
+	    map.addSource('route', {
+	         "type": "geojson",
+	         "data": route
+	    });
+
+        map.addLayer({
+            "id": "point",
+            "source": "point",
+            "type": "symbol",
+            "layout": {
+                 "icon-image": "airport-15",
+                 "icon-rotate": ["get", "bearing"],
+                 "icon-rotation-alignment": "map",
+                 "icon-allow-overlap": true,
+                 "icon-ignore-placement": true
+            },
+            "paint" : {
+				"icon-opacity": 1,
+            }
+        })
+
+    })
+
+    return map;
 
 }
 
 
+function updateMonth(val) {
+	var months = ['January','February','March','April','May','June','July',
+				'August','September','October','November','December'];
+
+	a = document.getElementById('month').textContent.split(',')
+	document.getElementById('month').textContent = months[val] + a[0].slice(-5) + ', ' + a[1];
+}
+
+
+function increment() {
+	document.getElementById("slider").stepUp(1);
+	updateMonth(parseInt(document.getElementById("slider").value,10))
+}
+
+
+function decrement() {
+	document.getElementById("slider").stepDown(1);
+	updateMonth(parseInt(document.getElementById("slider").value,10))
+}
+
+
+function disableButton() {
+    d3.select('#hide-alert2').style("display","none");
+
+	if (document.getElementById('slider').value == 0) {
+		document.getElementById('b1').disabled = true;
+		document.getElementById('b2').disabled = false;
+	} else if (document.getElementById('slider').value == 11) {
+		document.getElementById('b2').disabled = true;
+		document.getElementById('b1').disabled = false;
+	} else {
+		document.getElementById('b1').disabled = false;
+		document.getElementById('b2').disabled = false;
+	}
+}
+
+// sets all filters to default values
 
 function filtRefresh() {
 	document.getElementById('year').value = '2000';
@@ -59,29 +146,34 @@ function filtRefresh() {
 	filtSeverity(document.getElementById('severity').value)
 
 	document.getElementById('slider').value = 0;
-	handleSlider(document.getElementById('slider').value)
+	updateMonth(parseInt(document.getElementById("slider").value,10))
+	disableButton();
 }
 
 
+// hides first alert on click
+// updates slider description
 function filtYear(val) {
+	d3.select('#hide-alert1').style("display","none");
 	a = document.getElementById('month').textContent.split(',')
 	document.getElementById('month').textContent = a[0].slice(0,-4) + val + "," + a[1];
-	d3.select('#hide-alert1').style("display","none");
 }
 
 
+// hides first alert on click
 
 function filtPhase(val) {
+	d3.select('#hide-alert1').style("display","none");
 	a = document.getElementById('month').textContent.split(',')
 	document.getElementById('month').textContent = a[0] + ", " + val
-	d3.select('#hide-alert1').style("display","none");
 }
 
 
+// hides first alert on click
 
 function filtAtype(val) {
-	a = document.getElementById('indicator').textContent.split("Accidents Per Month");
 	d3.select('#hide-alert1').style("display","none");
+	a = document.getElementById('indicator').textContent.split("Accidents Per Month");
 
 	if (val != "All") {
 		document.getElementById('indicator').textContent = val + " Accidents Per Month" + a[1]
@@ -91,10 +183,11 @@ function filtAtype(val) {
 }
 
 
+// hides first alert on click
 
 function filtSeverity(val) {
-	a = document.getElementById('indicator').textContent.split("Accidents Per Month");
 	d3.select('#hide-alert1').style("display","none");
+	a = document.getElementById('indicator').textContent.split("Accidents Per Month");
 
 	if (val != "All") {
 		document.getElementById('indicator').textContent = a[0] + "Accidents Per Month (" + val + ")"
@@ -104,35 +197,7 @@ function filtSeverity(val) {
 }
 
 
-
-function increment() {
-	document.getElementById("slider").stepUp(1);
-}
-
-
-
-function decrement() {
-	document.getElementById("slider").stepDown(1);
-}
-
-
-
-function disableButton() {
-	if (document.getElementById('slider').value == 0) {
-		document.getElementById('b1').disabled = true;
-		document.getElementById('b2').disabled = false;
-	} else if (document.getElementById('slider').value == 11) {
-		document.getElementById('b2').disabled = true;
-		document.getElementById('b1').disabled = false;
-	} else {
-		document.getElementById('b1').disabled = false;
-		document.getElementById('b2').disabled = false;
-	}
-}
-
-
-
-function buildRoute() {
+function buildMetadataRoute() {
 	base_url = '/metadata/'
 	ids = ['year','broadPhase','atype','severity']
 
@@ -142,11 +207,22 @@ function buildRoute() {
 	})
 
 	url = base_url + arr.join('/')
-	console.log(url)
-
 	return url;
 }
 
 
+function buildCoordsRoute() {
+	base_url = '/coords/'
+	ids = ['year','broadPhase','atype','severity']
+
+	arr = [];
+	ids.forEach(id => {
+		arr.push(document.getElementById(id).value.toLowerCase())
+	})
+
+	url = base_url + arr.join('/')
+	return url;
+}
 
 init();
+map = initMap();

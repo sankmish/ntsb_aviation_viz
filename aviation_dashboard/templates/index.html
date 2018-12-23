@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>City Markers</title>
+  <title>Aviation Dashboard</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 
   <!-- d3.js -->
@@ -49,10 +49,10 @@
               <button onclick="filtRefresh();" type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
           </div>
           <div class="panel-body">
-            <p>Year of Interest:<select onchange="filtYear(this.value);buildRoute();buildPieCharts();" class="pull-right" id="year" style="width:100px"></select></p>
-            <p>Flight Phase:<select onchange="filtPhase(this.value);buildRoute();buildPieCharts();" class="pull-right" id="broadPhase" style="width:100px"></select></p>
-            <p>Aircraft Type:<select onchange="filtAtype(this.value);buildRoute();buildPieCharts();" class="pull-right" id="atype" style="width:100px"></select></p>
-            <p>Injury Severity:<select onchange="filtSeverity(this.value);buildRoute();buildPieCharts();" class="pull-right" id="severity" style="width:100px"></select></p>
+            <p>Year of Interest:<select onchange="filtYear(this.value);buildPieCharts();buildAviationMap(map);" class="pull-right" id="year" style="width:100px"></select></p>
+            <p>Flight Phase:<select onchange="filtPhase(this.value);buildPieCharts();buildAviationMap(map);" class="pull-right" id="broadPhase" style="width:100px"></select></p>
+            <p>Aircraft Type:<select onchange="filtAtype(this.value);buildPieCharts();buildAviationMap(map);" class="pull-right" id="atype" style="width:100px"></select></p>
+            <p>Injury Severity:<select onchange="filtSeverity(this.value);buildPieCharts();buildAviationMap(map);" class="pull-right" id="severity" style="width:100px"></select></p>
           </div>
         </div>
         <div class="panel panel-default">
@@ -62,24 +62,16 @@
           </div>
           <div id="sample-metadata" class="panel-body">
             <h4 class="text-center">% of Amateur-Built Aircrafts</h4>
-            <div class="well">  
               <div id="fig3"></div>
-            </div>
             <hr>
             <h4 class="text-center">Accidents by Purpose of Flight</h4>
-            <div class="well">
               <div id="fig4"></div>
-            </div>
             <hr>
             <h4 class="text-center">Accidents by Weather Condition</h4>
-            <div class="well">  
               <div id="fig5"></div>
-            </div>
             <hr>
             <h4 class="text-center">Extent of Aircraft Damage</h4>
-            <div class="well">  
               <div id="fig6"></div>
-            </div>
           </div>
         </div>
       </div>
@@ -95,13 +87,13 @@
                 <div id="sample-metadata" class="panel-body">
                 <label id="month"></label>
                 <div class="btn-group btn-group-xs pull-right" role="group" aria-label="...">
-                  <button onclick="decrement();disableButton();" id="b1" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
-                  <button onclick="increment();disableButton();" id="b2" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                  <button onclick="decrement();disableButton();buildAviationMap(map);" id="b1" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+                  <button onclick="increment();disableButton();buildAviationMap(map);" id="b2" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
                 </div>
-                <input onchange="disableButton();" id="slider" type="range" min="0" max="11" step="1" value="0"/>
+                <input onchange="updateMonth(this.value);disableButton();buildAviationMap(map);" id="slider" type="range" min="0" max="11" step="1" value="0"/>
                 </div>
               </div>
-              <div class="overlay" id="replay">
+              <div class="overlay" onclick="buildAviationMap(map);" id="replay">
                 <button>Replay</button>
               </div>
               <div class="alert alert-info text-center" id="hide-alert2" role="alert">Interact with slider to visualize data.</div>
