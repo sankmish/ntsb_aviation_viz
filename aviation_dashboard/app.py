@@ -40,8 +40,8 @@ def index():
     """Return the homepage."""
     return render_template("index.html")
 
-@app.route("/coords")
-def coords():
+@app.route("/coords/<year>/<broadPhase>/<atype>/<severity>")
+def coords(year,broadPhase,atype,severity):
 
     sel = [
         Accidents.EventDate,
@@ -49,20 +49,35 @@ def coords():
         Accidents.start_lons,
         Accidents.Latitude,
         Accidents.Longitude,
-        Accidents.BroadPhaseOfFlight
     ]
 
-    results = db.session.query(*sel).filter(Accidents.EventDate.contains('2014')).all()
+    phase_bool = (func.lower(Accidents.BroadPhaseOfFlight) == broadPhase)
+    atype_bool = (func.lower(Accidents.AircraftCategory) == atype)
+    sever_bool = (func.lower(Accidents.InjurySeverity).startswith(severity))
+
+    if broadPhase.lower() == 'all':
+        phase_bool = (1 == 1)
+
+    if atype.lower() == 'all':
+        atype_bool = (1 == 1)
+
+    if severity.lower() == 'all':
+        sever_bool = (1 == 1)
+
+    results = db.session.query(*sel).filter(Accidents.EventDate.endswith(year)).\
+                filter(phase_bool).\
+                filter(atype_bool).\
+                filter(sever_bool).all()
 
     coordinates = []
     for result in results:
         coord = {}
         coord["date"] = result[0]
+        coord["month"] = result[0][:2]
         coord["lat1"] = float(result[1])
         coord["lon1"] = float(result[2])
         coord["lat2"] = float(result[3])
         coord["lon2"] = float(result[4])
-        coord["phase"] = result[5]
         coordinates.append(coord)
 
     return jsonify(coordinates)
