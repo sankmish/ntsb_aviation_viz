@@ -49,6 +49,8 @@ def coords(year,broadPhase,atype,severity):
         Accidents.start_lons,
         Accidents.Latitude,
         Accidents.Longitude,
+        Accidents.AccidentNumber,
+        Accidents.EventId
     ]
 
     phase_bool = (func.lower(Accidents.BroadPhaseOfFlight) == broadPhase)
@@ -69,8 +71,10 @@ def coords(year,broadPhase,atype,severity):
                 filter(atype_bool).\
                 filter(sever_bool).all()
 
+    base_url = "https://app.ntsb.gov/pdfgenerator/ReportGeneratorFile.ashx"
     coordinates = []
-    for result in results:
+    holder = []
+    for i, result in enumerate(results):
         coord = {}
         coord["date"] = result[0]
         coord["month"] = result[0][:2]
@@ -78,6 +82,16 @@ def coords(year,broadPhase,atype,severity):
         coord["lon1"] = float(result[2])
         coord["lat2"] = float(result[3])
         coord["lon2"] = float(result[4])
+
+        code = result[5][5:7]
+        url = base_url + '?EventID=' + result[6] + '&AKey=1' + \
+            '&RType=HTML' + '&IType=' + code
+        if url in holder:
+            url = base_url + '?EventID=' + result[6] + '&AKey=2' + \
+                '&RType=HTML' + '&IType=' + code
+        holder.append(url)
+
+        coord["url"] = url
         coordinates.append(coord)
 
     return jsonify(coordinates)
@@ -109,10 +123,6 @@ def metadata(year,broadPhase,atype,severity):
 
     data = {
         "weather": df2.WeatherCondition.values.tolist(),
-        "fatal": df2.TotalFatalInjuries.values.tolist(),
-        "serious": df2.TotalSeriousInjuries.values.tolist(),
-        "minor": df2.TotalMinorInjuries.values.tolist(),
-        "uninjured": df2.TotalUninjured.values.tolist(),
         "damage": df2.AircraftDamage.values.tolist(),
         "amateur": df2.AmateurBuilt.values.tolist(),
         "purpose": df2.PurposeOfFlight.values.tolist(),

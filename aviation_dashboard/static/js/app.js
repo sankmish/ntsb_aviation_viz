@@ -1,3 +1,4 @@
+// 
 function triangles() {
 
 	var jumbotronBg = document.getElementById('triangles');
@@ -34,7 +35,7 @@ function init() {
 	}
 
 	triangles();
-	
+
 	document.getElementById('b1').disabled = true;
 	document.getElementById('year').value = '2005'
 	document.getElementById('month').textContent = 'January ' + document.getElementById('year').value + ", " + document.getElementById('broadPhase').value;
@@ -95,6 +96,14 @@ function initMap() {
 
 }
 
+function initPopup() {
+    var popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false
+    });
+
+    return popup;
+}
 
 function updateMonth(val) {
 	var months = ['January','February','March','April','May','June','July',
@@ -133,7 +142,6 @@ function disableButton() {
 }
 
 // sets all filters to default values
-
 function filtRefresh() {
 	document.getElementById('year').value = '2000';
 	document.getElementById('broadPhase').value = 'All';
@@ -226,3 +234,4 @@ function buildCoordsRoute() {
 
 init();
 map = initMap();
+popup = initPopup();
