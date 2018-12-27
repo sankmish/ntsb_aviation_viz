@@ -1,4 +1,4 @@
-function buildPieCharts() {
+function buildPieCharts(chart) {
 
   d3.json(buildMetadataRoute(), (err,response) => {
 
@@ -6,7 +6,7 @@ function buildPieCharts() {
         return self.indexOf(value) === index;
     }
 
-    keys = ['amateur','purpose','weather','damage']
+    keys = ['amateur','purpose','damage','weather']
 
     data = [];
     keys.forEach(key => {
@@ -35,7 +35,7 @@ function buildPieCharts() {
     var layout = {
       showlegend: false,
       autosize: true,
-      height:150,
+      height: 150,
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
       margin: { l: 0, r: 0, b: 10, t: 10 }

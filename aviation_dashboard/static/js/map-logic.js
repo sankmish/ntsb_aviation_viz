@@ -1,44 +1,3 @@
-function monthStr(val) {
-    switch (val) {
-    case 0:
-        str = '01';
-        break;
-    case 1:
-        str = '02';
-        break;
-    case 2:
-        str = '03';
-        break;
-    case 3:
-        str = '04';
-        break;
-    case 4:
-        str = '05';
-        break;
-    case 5:
-        str = '06';
-        break;
-    case 6:
-        str = '07';
-        break;
-    case 7:
-        str = '08';
-        break;
-    case 8:
-        str = '09';
-        break;
-    case 9:
-        str = '10';
-        break;
-    case 10:
-        str = '11';
-        break;
-    case 11:
-        str = '12'
-    }
-    return str;
-}
-
 function buildAviationMap(map,popup) {
 
     d3.json(buildCoordsRoute(), (err,coordinates) => {
@@ -93,7 +52,7 @@ function buildAviationMap(map,popup) {
             var lineDistance = turf.lineDistance(route.features[i], 'kilometers');
 
             var arc = [];
-            var steps = 50;
+            var steps = 100;
 
             for (var j = 0; j < lineDistance; j += lineDistance / steps) {
                 var segment = turf.along(route.features[i], j, 'kilometers');

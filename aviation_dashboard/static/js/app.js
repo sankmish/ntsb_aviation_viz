@@ -105,6 +105,55 @@ function initPopup() {
     return popup;
 }
 
+function initChart() {
+
+	var months = ['January','February','March','April','May','June','July',
+	                'August','September','October','November','December'];
+
+	var chart = c3.generate({
+	    bindto: '#fig2',
+	    type: 'line',
+	    size: { height: 400 },
+	    data: { columns:  [],
+				selection: { enabled: true }
+		},
+	    title: { text: 'Accidents per Month' },
+	    axis: {
+	        x: {
+	            type: 'category',
+	            categories: months,
+	            label: {
+	                text: 'Month',
+	                position: 'outer-center'
+	             }
+	        },
+	        y: {
+	            label: {
+	                text: 'Number Of Aviation Accidents',
+	                position: 'outer-middle'
+	            }
+	        }
+	    }
+	});
+
+	chart.legend.hide();
+    
+    types = ['spline','bar','line'];
+
+    counter = 0
+    endHere = 0
+    timer = window.setInterval(function(){
+        chart.transform(types[counter])
+        counter++
+        endHere++
+        if (counter == 3) { counter = 0 }
+        if (endHere == 10) { clearInterval(timer) }
+    },3000)
+
+	return chart;
+
+}
+
 function updateMonth(val) {
 	var months = ['January','February','March','April','May','June','July',
 				'August','September','October','November','December'];
@@ -232,6 +281,49 @@ function buildCoordsRoute() {
 	return url;
 }
 
+
+function monthStr(val) {
+    switch (val) {
+    case 0:
+        str = '01';
+        break;
+    case 1:
+        str = '02';
+        break;
+    case 2:
+        str = '03';
+        break;
+    case 3:
+        str = '04';
+        break;
+    case 4:
+        str = '05';
+        break;
+    case 5:
+        str = '06';
+        break;
+    case 6:
+        str = '07';
+        break;
+    case 7:
+        str = '08';
+        break;
+    case 8:
+        str = '09';
+        break;
+    case 9:
+        str = '10';
+        break;
+    case 10:
+        str = '11';
+        break;
+    case 11:
+        str = '12'
+    }
+    return str;
+}
+
 init();
 map = initMap();
 popup = initPopup();
+chart = initChart();

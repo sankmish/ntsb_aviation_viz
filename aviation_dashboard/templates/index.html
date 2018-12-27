@@ -49,10 +49,10 @@
               <button onclick="filtRefresh();" type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
           </div>
           <div class="panel-body">
-            <p>Year of Interest:<select onchange="filtYear(this.value);buildPieCharts();buildAviationMap(map,popup);" class="pull-right" id="year"></select></p>
-            <p>Flight Phase:<select onchange="filtPhase(this.value);buildPieCharts();buildAviationMap(map,popup);" class="pull-right" id="broadPhase"></select></p>
-            <p>Aircraft Type:<select onchange="filtAtype(this.value);buildPieCharts();buildAviationMap(map,popup);" class="pull-right" id="atype"></select></p>
-            <p>Injury Severity:<select onchange="filtSeverity(this.value);buildPieCharts();buildAviationMap(map,popup);" class="pull-right" id="severity"></select></p>
+            <p>Year of Interest:<select onchange="filtYear(this.value);buildPieCharts();buildFreqChart(chart);buildAviationMap(map,popup);" class="pull-right" id="year"></select></p>
+            <p>Flight Phase:<select onchange="filtPhase(this.value);buildPieCharts();buildFreqChart(chart);buildAviationMap(map,popup);" class="pull-right" id="broadPhase"></select></p>
+            <p>Aircraft Type:<select onchange="filtAtype(this.value);buildPieCharts();buildFreqChart(chart);buildAviationMap(map,popup);" class="pull-right" id="atype"></select></p>
+            <p>Injury Severity:<select onchange="filtSeverity(this.value);buildPieCharts();buildFreqChart(chart);buildAviationMap(map,popup);" class="pull-right" id="severity"></select></p>
           </div>
         </div>
         <div class="panel panel-default">
@@ -67,11 +67,15 @@
             <h4 class="text-center">Accidents by Purpose of Flight</h4>
               <div id="fig4"></div>
             <hr>
-            <h4 class="text-center">Accidents by Weather Condition</h4>
+            <h4 class="text-center">Extent of Aircraft Damage</h4>
               <div id="fig5"></div>
             <hr>
-            <h4 class="text-center">Extent of Aircraft Damage</h4>
+            <h4 class="text-center">Accidents by Weather Condition</h4>
               <div id="fig6"></div>
+            <hr>
+            <p>Dictionary:</p>
+            <p>VMC = Visible Meteorological Conditions</p>
+            <p>IMC = Instrument Meteorological Conditions</p>
           </div>
         </div>
       </div>
@@ -87,10 +91,10 @@
                 <div id="sample-metadata" class="panel-body">
                 <label id="month"></label>
                 <div class="btn-group btn-group-xs pull-right" role="group" aria-label="...">
-                  <button onclick="decrement();disableButton();buildAviationMap(map,popup);" id="b1" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
-                  <button onclick="increment();disableButton();buildAviationMap(map,popup);" id="b2" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                  <button onclick="decrement();disableButton();buildAviationMap(map,popup);buildFreqChart(chart);" id="b1" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+                  <button onclick="increment();disableButton();buildAviationMap(map,popup);buildFreqChart(chart);" id="b2" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
                 </div>
-                <input onchange="updateMonth(this.value);disableButton();buildAviationMap(map,popup);" id="slider" type="range" min="0" max="11" step="1" value="0"/>
+                <input onchange="updateMonth(this.value);disableButton();buildAviationMap(map,popup);buildFreqChart(chart);" id="slider" type="range" min="0" max="11" step="1" value="0"/>
                 </div>
               </div>
               <div class="overlay" onclick="buildAviationMap(map,popup);" id="replay">
@@ -106,6 +110,13 @@
               <div id="fig2"></div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          Hover over any airplane icon to access NTSB Crash Reports.
         </div>
       </div>
     </div>
