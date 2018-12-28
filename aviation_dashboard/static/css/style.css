@@ -21,6 +21,15 @@ select {
     width: 100px;
 }
 
+small {
+    font-size:100%;
+}
+
+footer {
+    background-color: #F5F5F5;
+    padding:10px;
+}
+
 .alert {
     margin: 0;
 }
