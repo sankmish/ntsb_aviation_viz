@@ -6,7 +6,7 @@ function buildPieCharts(chart) {
         return self.indexOf(value) === index;
     }
 
-    keys = ['amateur','purpose','damage','weather']
+    keys = ['phase','amateur','purpose','damage','weather']
 
     data = [];
     keys.forEach(key => {
@@ -45,6 +45,7 @@ function buildPieCharts(chart) {
     Plotly.newPlot("fig4", data[1], layout, {displayModeBar: false});
     Plotly.newPlot("fig5", data[2], layout, {displayModeBar: false});
     Plotly.newPlot("fig6", data[3], layout, {displayModeBar: false});
+    Plotly.newPlot("fig7", data[4], layout, {displayModeBar: false});
       
   });
 

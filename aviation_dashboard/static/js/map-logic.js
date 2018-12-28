@@ -52,7 +52,7 @@ function buildAviationMap(map,popup) {
             var lineDistance = turf.lineDistance(route.features[i], 'kilometers');
 
             var arc = [];
-            var steps = 100;
+            var steps = 50;
 
             for (var j = 0; j < lineDistance; j += lineDistance / steps) {
                 var segment = turf.along(route.features[i], j, 'kilometers');
