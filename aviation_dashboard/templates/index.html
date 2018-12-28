@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Aviation Dashboard</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+  <!-- d3.js -->
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+
+  <!-- Mapbox GL -->
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js"></script>
+  <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css"/>
+
+  <!-- Turf.js -->
+  <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js" charset="utf-8"></script>
+
+  <!-- Plotly.js -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  
+  <!-- C3.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.11/c3.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.11/c3.min.css">
+
+  <!-- Trianglify.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/1.2.0/trianglify.min.js"></script>
+  
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- Our CSS -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/style.css") }}">
+</head>
+
+<body onresize="triangles();">
+
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 jumbotron text-center" id="triangles">
+        <h1>NTSB Aviation Accident Dashboard</h1>
+        <p>Use the interactive charts below to explore the dataset.</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="panel panel-default">
+          <div class="panel-heading clearfix">
+              <h3 class="panel-title pull-left">Filter Types</h3>
+              <button onclick="filtRefresh();" type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+          </div>
+          <div class="panel-body">
+            <p>Year of Interest:<select onchange="filtYear(this.value);buildMetadata();buildPieCharts();buildFreqChart(chart);buildAviationMap(map,popup);" class="pull-right" id="year"></select></p>
+            <p>Flight Phase:<select onchange="filtPhase(this.value);buildMetadata();buildPieCharts();buildFreqChart(chart);buildAviationMap(map,popup);" class="pull-right" id="broadPhase"></select></p>
+            <p>Aircraft Type:<select onchange="filtAtype(this.value);buildMetadata();buildPieCharts();buildFreqChart(chart);buildAviationMap(map,popup);" class="pull-right" id="atype"></select></p>
+            <p>Injury Severity:<select onchange="filtSeverity(this.value);buildMetadata();buildPieCharts();buildFreqChart(chart);buildAviationMap(map,popup);" class="pull-right" id="severity"></select></p>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="alert alert-info text-center" id="hide-alert1" role="alert">Apply filters to visualize data.</div>
+          <div class="panel-heading">
+            <h3 class="panel-title">Sample Metadata</h3>
+          </div>
+          <div class="panel-body">
+            <h4 class="text-center">Accidents by Broad Phase of Flight</h4>
+            <div id="fig3"></div>
+            <hr>
+            <div id="sample-metadata"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-9">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div id="map"></div>
+                <div class="panel panel-default overlay" id="month-slider">
+                  <div class="panel-heading">
+                    <h3 class="panel-title" id="indicator">Aviation Accidents Per Month</h3>
+                  </div>
+                  <div class="panel-body">
+                  <label id="month"></label>
+                  <div class="btn-group btn-group-xs pull-right" role="group" aria-label="...">
+                    <button onclick="decrement();disableButton();buildAviationMap(map,popup);buildFreqChart(chart);" id="b1" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+                    <button onclick="increment();disableButton();buildAviationMap(map,popup);buildFreqChart(chart);" id="b2" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                  </div>
+                  <input onchange="updateMonth(this.value);disableButton();buildAviationMap(map,popup);buildFreqChart(chart);" id="slider" type="range" min="0" max="11" step="1" value="0"/>
+                  </div>
+                </div>
+                <div class="overlay" onclick="buildAviationMap(map,popup);" id="replay">
+                  <button>Replay</button>
+                </div>
+                <div class="alert alert-info text-center" id="hide-alert2" role="alert">Interact with slider to visualize data.</div>
+              </div>
+              <div class="panel-footer text-center">
+                Click on any airplane icon to access NTSB Crash Reports.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div id="fig2"></div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-sm-12 col-md-6 col-lg-6">
+                <h4 class="text-center">% of Amateur-Built Aircrafts</h4>
+                <div id="fig4"></div>
+              </div>
+              <div class="col-sm-12 col-md-6 col-lg-6">
+                <h4 class="text-center">Accidents by Purpose of Flight</h4>
+                <div id="fig5"></div>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-12 col-md-6 col-lg-6">
+                <h4 class="text-center">Extent of Aircraft Damage</h4>
+                <div id="fig6"></div>
+              </div>
+              <div class="col-sm-12 col-md-6 col-lg-6">
+                <h4 class="text-center">Accidents by Weather Condition</h4>
+                <div id="fig7"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  <!-- end container -->
+
+  <footer class="footer">
+    <div class="container">
+      <span class="text-muted">Created and compiled by Sanket Mishra, Iqbal Sandhu, and Yamini Sasidhar.</span>
+    </div>
+  </footer>
+
+  <script src="{{ url_for("static", filename="js/config.js") }}"></script>
+  <script src="{{ url_for("static", filename="js/app.js") }}"></script>
+  <script src="{{ url_for("static", filename="js/logic.js") }}"></script>
+  <script src="{{ url_for("static", filename="js/map-logic.js") }}"></script>
+  <script src="{{ url_for("static", filename="js/freq-logic.js") }}"></script>
+  <script src="{{ url_for("static", filename="js/pie-logic.js") }}"></script>
+
+</body>
+</html>

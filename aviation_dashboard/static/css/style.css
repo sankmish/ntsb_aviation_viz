@@ -1,0 +1,76 @@
+body {
+    padding: 0;
+    margin: 0;
+    font-size: small;
+}
+
+#map {
+    height: 435px;
+}
+
+h1 {
+  text-align: center;
+}
+
+h4 {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+select {
+    width: 100px;
+}
+
+small {
+    font-size:100%;
+}
+
+footer {
+    background-color: #F5F5F5;
+    padding:10px;
+}
+
+.alert {
+    margin: 0;
+}
+
+.overlay {
+    position: absolute;
+    top: 30px;
+}
+
+.overlay button {
+    font: 600 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    background-color: #3386c0;
+    color: #fff;
+    display: inline-block;
+    margin: 0;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.overlay button:hover {
+    background-color:#4ea0da;
+}
+
+#month-slider {
+    position: absolute;
+    left: 45px;
+    width: 300px;
+}
+
+#replay {
+    position: absolute;
+    right: 45px;
+}
+
+.panel-title {
+    font:600 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+#month {
+    font:600 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-weight:normal;
+}
