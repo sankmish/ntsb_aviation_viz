@@ -14,6 +14,9 @@ function buildFreqChart(chart) {
             
         chart.load({columns: [data]})
 
+        year = document.getElementById('year').value        
+        d3.select('.c3-title').text('Accidents per Month in ' + year)
+
         n = parseInt(document.getElementById("slider").value,10)
         chart.regions([{axis: 'x', start: n - 0.5, end: n + 0.5, class: 'regionX'}]);
 
