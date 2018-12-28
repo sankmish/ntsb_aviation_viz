@@ -126,6 +126,7 @@ def metadata(year,broadPhase,atype,severity):
         "damage": df2.AircraftDamage.values.tolist(),
         "amateur": df2.AmateurBuilt.values.tolist(),
         "purpose": df2.PurposeOfFlight.values.tolist(),
+        "phase": df2.BroadPhaseOfFlight.values.tolist()
     }
 
     return jsonify(data)
