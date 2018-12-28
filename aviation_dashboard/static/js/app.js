@@ -147,11 +147,63 @@ function initChart() {
         counter++
         endHere++
         if (counter == 3) { counter = 0 }
-        if (endHere == 10) { clearInterval(timer) }
+        if (endHere == 25) { clearInterval(timer) }
     },3000)
 
 	return chart;
 
+}
+
+function buildMetadata() {
+
+	var metadata = d3.select('#sample-metadata');
+	metadata.text('')
+
+	d3.json(buildMetadataRoute(), (err,response) => {
+
+		function distinct(value, index, self) { 
+		    return self.indexOf(value) === index && value != null;
+		}
+
+		arr1 = [];
+		arr2 = [];
+
+		desc = ['Number of Regulation Aircrafts', 'Number of Amateur-Built Aircrafts']
+		labels = ['No','Yes'];
+		counts = labels.map((item,idx) => response['amateur'].filter(x => { return x === labels[idx]}).length);
+
+		arr1.push(desc)
+		arr2.push(counts)
+
+		desc = ['Number of Aircrafts with Minor Damage', 'Number of Aircrafts with Substantial Damage', 'Number of Aircrafts Destroyed']
+		labels = ['Minor','Substantial','Destroyed'];
+		counts = labels.map((item,idx) => response['damage'].filter(x => { return x === labels[idx]}).length);
+
+		arr1.push(desc)
+		arr2.push(counts)
+
+		desc = ['Number of Accidents in Visible Weather Conditions', 'Number of Accidents in Instrument Weather Conditions']
+		labels = ['VMC','IMC'];
+		counts = labels.map((item,idx) => response['weather'].filter(x => { return x === labels[idx]}).length);
+
+		arr1.push(desc)
+		arr2.push(counts)
+
+		desc = ['Number of Fatal Accidents', 'Number of Non-Fatal Accidents']
+		labels = ['Fatal','Non-Fatal'];
+		counts = labels.map((item,idx) => response['fatal'].filter(x => { return x.startsWith(labels[idx])}).length);
+
+		arr1.push(desc)
+		arr2.push(counts)
+
+		arr1 = arr1.flat()
+		arr2 = arr2.flat()
+
+		arr2.forEach((count,i) => {
+			var instance = metadata.append('p');
+			instance.text(arr1[i] + ': ' + count)
+		})
+	})
 }
 
 function updateMonth(val) {
